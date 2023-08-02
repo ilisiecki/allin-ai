@@ -1,7 +1,9 @@
-import { currentUser } from "@clerk/nextjs";
+"use client";
 
-export default async function GetUserEmail() {
-  const user = await currentUser();
+import { useUser } from "@clerk/nextjs";
+
+export default function GetUserEmail() {
+  const { user } = useUser();
 
   return (
     <div className="text-center font-light text-muted-foreground">

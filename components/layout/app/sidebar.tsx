@@ -72,7 +72,7 @@ const Sidebar = () => {
       <div className="flex-1 px-3 py-2">
         <Link href="/dashboard" className="mb-5 flex items-center pl-3">
           <div className="relative mr-4 h-8 w-8">
-            <Image src="/img/allin-ai-logo.webp" alt="logo" fill />
+            <Image src="/img/allin-ai-logo.webp" alt="logo" fill sizes="8" />
           </div>
           <h1 className={cn("text-2xl font-bold", montserrat.className)}>
             Allin

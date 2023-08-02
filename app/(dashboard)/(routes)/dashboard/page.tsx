@@ -53,7 +53,7 @@ const tools = [
 export default function DashboardPage() {
   const router = useRouter();
   return (
-    <div className="-mt-16 flex h-screen items-center justify-center">
+    <div className="flex justify-center">
       <div>
         <div className="mb-8 space-y-4">
           <h2 className="text-center text-2xl font-bold md:text-4xl">
