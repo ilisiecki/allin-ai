@@ -3,14 +3,12 @@
 import Heading from "@/components/layout/app/heading";
 import Loader from "@/components/layout/app/loader";
 import Empty from "@/components/layout/app/empty";
-import UserAvatar from "@/components/layout/app/user-avatar";
-import AiAvatar from "@/components/layout/app/ai-avatar";
 
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { MessageSquare } from "lucide-react";
+import { MusicIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { FormSchema } from "./constants";
@@ -18,15 +16,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ChatCompletionRequestMessage } from "openai";
-
-import { cn } from "@/lib/utils";
 import { useProModal } from "@/lib/store/use-pro-modal";
 
-const TextPage = () => {
+const MusicPage = () => {
   const proModal = useProModal();
   const router = useRouter();
-  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const [music, setMusic] = useState<string>();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -38,19 +33,9 @@ const TextPage = () => {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const userMessage: ChatCompletionRequestMessage = {
-        role: "user",
-        content: data.prompt,
-      };
-
-      const newMessages = [...messages, userMessage];
-
-      const response = await axios.post("../api/text", {
-        messages: newMessages,
-      });
-
-      setMessages((current) => [...current, userMessage, response.data]);
-
+      setMusic(undefined);
+      const response = await axios.post("../api/music", data);
+      setMusic(response.data.audio);
       form.reset();
     } catch (error: any) {
       if (error?.response?.status === 403) {
@@ -64,11 +49,11 @@ const TextPage = () => {
   return (
     <div>
       <Heading
-        title="Text"
-        description="Generate text with Ai."
-        icon={MessageSquare}
-        iconColor="text-violet-500"
-        bgColor="bg-violet-500/10"
+        title="Music"
+        description="Generate music with Ai."
+        icon={MusicIcon}
+        iconColor="text-green-500"
+        bgColor="bg-green-500/10"
       />
       <div className="px-4 lg:px-8">
         <div>
@@ -86,9 +71,9 @@ const TextPage = () => {
                         id="prompt"
                         aria-describedby="prompt"
                         disabled={isLoading}
-                        placeholder="ex. Write me a description about sunglasses."
+                        placeholder="ex. Piano solo."
                         {...field}
-                        className=" border-0 px-2 caret-violet-500 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+                        className=" border-0 px-2 caret-green-500 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                       />
                     </FormControl>
                   </FormItem>
@@ -107,32 +92,21 @@ const TextPage = () => {
         <div className="mt-4 space-y-4">
           {isLoading && (
             <div className="flex w-full items-center justify-center rounded-lg bg-muted p-16">
-              <Loader label="Generating text..." />
+              <Loader label="Generating music..." />
             </div>
           )}
-          {messages.length === 0 && !isLoading && (
-            <Empty label="Waiting for text generate..." />
+          {!music && !isLoading && (
+            <Empty label="Waiting for music generate..." />
           )}
-          <div className="flex flex-col-reverse gap-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.content}
-                className={cn(
-                  "flex w-full items-center gap-x-8 rounded-lg p-8",
-                  message.role === "user"
-                    ? "border border-black/10 bg-white"
-                    : "bg-muted"
-                )}
-              >
-                {message.role === "user" ? <UserAvatar /> : <AiAvatar />}
-                <p className="text-sm">{message.content}</p>
-              </div>
-            ))}
-          </div>
+          {music && (
+            <audio controls className="mt-8 w-full">
+              <source src={music} />
+            </audio>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default TextPage;
+export default MusicPage;

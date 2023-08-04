@@ -3,6 +3,8 @@
 import { Montserrat } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 import { cn } from "@/lib/utils";
 import {
   CodeIcon,
@@ -13,7 +15,7 @@ import {
   SettingsIcon,
   VideoIcon,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import FreeCounter from "./free-counter";
 
 const montserrat = Montserrat({ weight: "600", subsets: ["latin"] });
 const routesApp = [
@@ -64,7 +66,11 @@ const routesAi = [
   },
 ];
 
-const Sidebar = () => {
+type Props = {
+  apiLimitCount: number;
+};
+
+const Sidebar = (props: Props) => {
   const pathname = usePathname();
 
   return (
@@ -120,6 +126,7 @@ const Sidebar = () => {
           ))}
         </div>
       </div>
+      <FreeCounter apiLimitCount={props.apiLimitCount} />
     </div>
   );
 };

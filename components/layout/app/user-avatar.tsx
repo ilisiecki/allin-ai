@@ -6,7 +6,7 @@ const UserAvatar = () => {
   return (
     <Avatar className="h-10 w-10">
       <AvatarImage src={user?.profileImageUrl} />
-      <AvatarFallback>
+      <AvatarFallback className="bg-gradient-to-r from-teal-500 to-blue-500 font-semibold text-white">
         {user?.emailAddresses[0].emailAddress.slice(0, 2)}
       </AvatarFallback>
     </Avatar>

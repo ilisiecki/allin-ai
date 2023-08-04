@@ -10,7 +10,10 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { MessageSquare } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useProModal } from "@/lib/store/use-pro-modal";
+
+import { CodeIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { FormSchema } from "./constants";
@@ -20,10 +23,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ChatCompletionRequestMessage } from "openai";
 
-import { cn } from "@/lib/utils";
-import { useProModal } from "@/lib/store/use-pro-modal";
+import ReactMarkdown from "react-markdown";
 
-const TextPage = () => {
+const CodePage = () => {
   const proModal = useProModal();
   const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
@@ -45,7 +47,7 @@ const TextPage = () => {
 
       const newMessages = [...messages, userMessage];
 
-      const response = await axios.post("../api/text", {
+      const response = await axios.post("../api/code", {
         messages: newMessages,
       });
 
@@ -64,11 +66,11 @@ const TextPage = () => {
   return (
     <div>
       <Heading
-        title="Text"
-        description="Generate text with Ai."
-        icon={MessageSquare}
-        iconColor="text-violet-500"
-        bgColor="bg-violet-500/10"
+        title="Code"
+        description="Generate code with Ai."
+        icon={CodeIcon}
+        iconColor="text-red-500"
+        bgColor="bg-red-500/10"
       />
       <div className="px-4 lg:px-8">
         <div>
@@ -86,9 +88,9 @@ const TextPage = () => {
                         id="prompt"
                         aria-describedby="prompt"
                         disabled={isLoading}
-                        placeholder="ex. Write me a description about sunglasses."
+                        placeholder="ex. Typescript toggle button with tailwind and react."
                         {...field}
-                        className=" border-0 px-2 caret-violet-500 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+                        className=" border-0 px-2 caret-red-500 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                       />
                     </FormControl>
                   </FormItem>
@@ -107,11 +109,11 @@ const TextPage = () => {
         <div className="mt-4 space-y-4">
           {isLoading && (
             <div className="flex w-full items-center justify-center rounded-lg bg-muted p-16">
-              <Loader label="Generating text..." />
+              <Loader label="Generating code..." />
             </div>
           )}
           {messages.length === 0 && !isLoading && (
-            <Empty label="Waiting for text generate..." />
+            <Empty label="Waiting for code generate..." />
           )}
           <div className="flex flex-col-reverse gap-y-4">
             {messages.map((message) => (
@@ -125,7 +127,21 @@ const TextPage = () => {
                 )}
               >
                 {message.role === "user" ? <UserAvatar /> : <AiAvatar />}
-                <p className="text-sm">{message.content}</p>
+                <ReactMarkdown
+                  components={{
+                    pre: ({ node, ...props }) => (
+                      <div className="my-2 w-full overflow-auto rounded-lg bg-black/10 p-2">
+                        <pre {...props} />
+                      </div>
+                    ),
+                    code: ({ node, ...props }) => (
+                      <code className="rounded-lg bg-black/10 p-1" {...props} />
+                    ),
+                  }}
+                  className="overflow-hidden text-sm leading-7"
+                >
+                  {message.content || ""}
+                </ReactMarkdown>
               </div>
             ))}
           </div>
@@ -135,4 +151,4 @@ const TextPage = () => {
   );
 };
 
-export default TextPage;
+export default CodePage;

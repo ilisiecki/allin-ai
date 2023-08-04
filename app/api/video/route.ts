@@ -1,30 +1,24 @@
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import { Configuration, OpenAIApi } from "openai";
+import Replicate from "replicate";
 import { increaseApiLimit, checkApiLimit } from "@/lib/api-limit";
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+const replicate = new Replicate({
+  auth: process.env.REPLICATE_API_TOKEN!,
 });
-
-const openai = new OpenAIApi(configuration);
 
 export async function POST(req: Request) {
   try {
     const { userId } = auth();
     const body = await req.json();
-    const { messages } = body;
+    const { prompt } = body;
 
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    if (!configuration.apiKey) {
-      return new NextResponse("Missing API key", { status: 500 });
-    }
-
-    if (!messages) {
-      return new NextResponse("Bad Request. Messages are required", {
+    if (!prompt) {
+      return new NextResponse("Bad Request. Prompt are required", {
         status: 400,
       });
     }
@@ -35,16 +29,20 @@ export async function POST(req: Request) {
       return new NextResponse("Free trial has expired.", { status: 403 });
     }
 
-    const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages,
-    });
+    const response = await replicate.run(
+      "anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351",
+      {
+        input: {
+          prompt: prompt,
+        },
+      }
+    );
 
     await increaseApiLimit();
 
-    return NextResponse.json(response.data.choices[0].message);
+    return NextResponse.json(response);
   } catch (error) {
-    console.log("TEXT_GENERATION_ERROR", error);
+    console.log("VIDEO_GENERATION_ERROR", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
