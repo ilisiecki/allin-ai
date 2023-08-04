@@ -13,9 +13,24 @@ import {
 
 import { useProModal } from "@/lib/store/use-pro-modal";
 import { Zap } from "lucide-react";
+import axios from "axios";
+import { useState } from "react";
 
 const ProModal = () => {
   const proModal = useProModal();
+  const [loading, setLoading] = useState(false);
+
+  const onSubscribe = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("/api/stripe");
+      window.location.href = response.data.url;
+    } catch (error) {
+      console.log(error, "STRIPE_CLIENT_ERROR");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Dialog open={proModal.isOpen} onOpenChange={proModal.onClose}>
@@ -34,7 +49,12 @@ const ProModal = () => {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button size="lg" variant="pro" className="mt-2 w-full">
+          <Button
+            size="lg"
+            variant="pro"
+            onClick={onSubscribe}
+            className="mt-2 w-full"
+          >
             Upgrade
             <Zap className="ml-2 h-4 w-4 fill-white" />
           </Button>

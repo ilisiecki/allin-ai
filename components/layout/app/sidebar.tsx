@@ -68,6 +68,7 @@ const routesAi = [
 
 type Props = {
   apiLimitCount: number;
+  isPro: boolean;
 };
 
 const Sidebar = (props: Props) => {
@@ -126,7 +127,7 @@ const Sidebar = (props: Props) => {
           ))}
         </div>
       </div>
-      <FreeCounter apiLimitCount={props.apiLimitCount} />
+      <FreeCounter apiLimitCount={props.apiLimitCount} isPro={props.isPro} />
     </div>
   );
 };

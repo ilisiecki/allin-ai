@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 
 type Props = {
   apiLimitCount: number;
+  isPro: boolean;
 };
 
 const FreeCounter = (props: Props) => {
@@ -22,6 +23,10 @@ const FreeCounter = (props: Props) => {
   }, []);
 
   if (!mounted) {
+    return null;
+  }
+
+  if (props.isPro) {
     return null;
   }
 

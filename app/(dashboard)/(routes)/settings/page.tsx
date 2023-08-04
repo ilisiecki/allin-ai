@@ -1,7 +1,29 @@
-const SettingsPage = () => {
+import { Settings } from "lucide-react";
+
+import { checkSubscription } from "@/lib/subscription";
+import Heading from "@/components/layout/app/heading";
+import { SubscriptionButton } from "@/components/layout/app/subscription-button";
+
+const SettingsPage = async () => {
+  const isPro = await checkSubscription();
+
   return (
-    <div className="-mt-16 flex h-screen items-center justify-center border-2 border-red-500">
-      <div className="h-24 w-24 bg-blue-500"></div>
+    <div>
+      <Heading
+        title="Settings"
+        description="Manage account settings."
+        icon={Settings}
+        iconColor="text-gray-700"
+        bgColor="bg-gray-700/10"
+      />
+      <div className="space-y-4 px-4 lg:px-8">
+        <div className="text-sm text-muted-foreground">
+          {isPro
+            ? "You are currently on a Pro plan."
+            : "You are currently on a free plan."}
+        </div>
+        <SubscriptionButton isPro={isPro} />
+      </div>
     </div>
   );
 };

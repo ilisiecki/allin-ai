@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 type Props = {
   apiLimitCount: number;
+  isPro: boolean;
 };
 
 const MobileSidebar = (props: Props) => {
@@ -28,7 +29,7 @@ const MobileSidebar = (props: Props) => {
         </div>
       </SheetTrigger>
       <SheetContent side="left" className="p-0">
-        <Sidebar apiLimitCount={props.apiLimitCount} />
+        <Sidebar apiLimitCount={props.apiLimitCount} isPro={props.isPro} />
       </SheetContent>
     </Sheet>
   );
