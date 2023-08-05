@@ -22,6 +22,7 @@ import { ChatCompletionRequestMessage } from "openai";
 
 import { cn } from "@/lib/utils";
 import { useProModal } from "@/lib/store/use-pro-modal";
+import { toast } from "react-hot-toast";
 
 const TextPage = () => {
   const proModal = useProModal();
@@ -55,6 +56,8 @@ const TextPage = () => {
     } catch (error: any) {
       if (error?.response?.status === 403) {
         proModal.onOpen();
+      } else {
+        toast.error("Something went wrong");
       }
     } finally {
       router.refresh();

@@ -28,6 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useProModal } from "@/lib/store/use-pro-modal";
+import { toast } from "react-hot-toast";
 
 const ImagePage = () => {
   const proModal = useProModal();
@@ -56,6 +57,8 @@ const ImagePage = () => {
     } catch (error: any) {
       if (error?.response?.status === 403) {
         proModal.onOpen();
+      } else {
+        toast.error("Something went wrong");
       }
     } finally {
       router.refresh();
